@@ -1,25 +1,28 @@
--- phân tích vấn đề: 
--- lí do chính là do update thiếu đi WHERE để xác định đúng vị trí mục thiết bị điện tử 
--- => gây ra lỗi khiến cho hệ thống thay đổi giá toàn bộ khiến thất thoát lợi nhuận
+USE sql_session2;
 
 
-CREATE DATABASE products_database;
-USE products_database;
+DROP TABLE CART_ITEMS;
+CREATE TABLE CART_ITEMS (
+    CartItemID INT PRIMARY KEY AUTO_INCREMENT,
+    UserID INT,
+    ProductID INT,
+    Quantity INT CHECK(Quantity>0),
+    AddedDate DATETIME DEFAULT(CURRENT_TIMESTAMP()),
+    UNIQUE(UserID,ProductID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE PRODUCTS (
-ProductID INT PRIMARY KEY,
-ProductName VARCHAR(100),
-Category VARCHAR(50),
-OriginalPrice DECIMAL(18, 2)
-);
+-- để ngắn người dùng nhập -5 thì ta nên thêm rằng buộc cho thuộc tính 
+-- để ngăn 1 người dừng mua sp đã có ta cần thêm rằng buộc unique
 
-INSERT INTO PRODUCTS (ProductID, ProductName, Category, OriginalPrice)
-VALUES
-(1, 'iPhone 15', 'Electronics', 20000000),
-(2, 'Samsung Refrigerator', 'Electronics', 1500000),
-(3, 'Water Spinach', 'Food', 10000),
-(4, 'Filtered Fresh Milk 4', 'Food', 28000);
+INSERT INTO CART_ITEMS
+VALUES(NULL, 1, 1, 20, DEFAULT);
 
-UPDATE PRODUCTS
-SET OriginalPrice = OriginalPrice * 0.9 WHERE Category = 'Electronics';
-SELECT * FROM products_database.products;
+SELECT CartItemID, UserID, ProductID, Quantity, AddedDate
+FROM CART_ITEMS;
+
+UPDATE CART_ITEMS
+SET Quantity=5
+WHERE CartItemID=1;
+
+DELETE FROM CART_ITEMS
+WHERE CartItemID=1;
